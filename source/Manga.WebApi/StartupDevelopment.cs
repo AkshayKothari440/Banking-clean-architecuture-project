@@ -4,6 +4,7 @@ using System.Text;
 using Manga.Application.Authentication;
 using Manga.Application.Repositories;
 using Manga.Application.Service;
+using Manga.Application.Services;
 using Manga.Domain;
 using Manga.Infrastructure.EntityFrameworkDataAccess;
 using Manga.Infrastructure.IdentityAuthentication;
@@ -77,6 +78,7 @@ namespace Manga.WebApi
         private void AddAuthentication(IServiceCollection services)
         {
             services.AddScoped<IRegisterUserService, RegisterUser>();
+            services.AddScoped<ILoginUserService, LoginUser>();
         }
         private void AddIdentity(IServiceCollection services)
         {
@@ -119,18 +121,25 @@ namespace Manga.WebApi
             services.AddScoped<Manga.WebApi.UseCases.GetCustomerDetails.Presenter, Manga.WebApi.UseCases.GetCustomerDetails.Presenter>();
             services.AddScoped<Manga.WebApi.UseCases.Register.Presenter, Manga.WebApi.UseCases.Register.Presenter>();
             services.AddScoped<Manga.WebApi.UseCases.Withdraw.Presenter, Manga.WebApi.UseCases.Withdraw.Presenter>();
+            services.AddScoped<Manga.WebApi.UseCases.Login.Presenter, Manga.WebApi.UseCases.Login.Presenter>();
+
             services.AddScoped<Manga.Application.Boundaries.CloseAccount.IOutputHandler>(x => x.GetRequiredService<Manga.WebApi.UseCases.CloseAccount.Presenter>());
             services.AddScoped<Manga.Application.Boundaries.Deposit.IOutputHandler>(x => x.GetRequiredService<Manga.WebApi.UseCases.Deposit.Presenter>());
             services.AddScoped<Manga.Application.Boundaries.GetAccountDetails.IOutputHandler>(x => x.GetRequiredService<Manga.WebApi.UseCases.GetAccountDetails.Presenter>());
             services.AddScoped<Manga.Application.Boundaries.GetCustomerDetails.IOutputHandler>(x => x.GetRequiredService<Manga.WebApi.UseCases.GetCustomerDetails.Presenter>());
             services.AddScoped<Manga.Application.Boundaries.Register.IOutputHandler>(x => x.GetRequiredService<Manga.WebApi.UseCases.Register.Presenter>());
             services.AddScoped<Manga.Application.Boundaries.Withdraw.IOutputHandler>(x => x.GetRequiredService<Manga.WebApi.UseCases.Withdraw.Presenter>());
+            services.AddScoped<Manga.Application.Boundaries.Login.IOutputHandler>(x => x.GetRequiredService<Manga.WebApi.UseCases.Login.Presenter>());
+
+
             services.AddScoped<Manga.Application.Boundaries.CloseAccount.IUseCase, Manga.Application.UseCases.CloseAccount>();
             services.AddScoped<Manga.Application.Boundaries.Deposit.IUseCase, Manga.Application.UseCases.Deposit>();
             services.AddScoped<Manga.Application.Boundaries.GetAccountDetails.IUseCase, Manga.Application.UseCases.GetAccountDetails>();
             services.AddScoped<Manga.Application.Boundaries.GetCustomerDetails.IUseCase, Manga.Application.UseCases.GetCustomerDetails>();
             services.AddScoped<Manga.Application.Boundaries.Register.IUseCase, Manga.Application.UseCases.Register>();
             services.AddScoped<Manga.Application.Boundaries.Withdraw.IUseCase, Manga.Application.UseCases.Withdraw>();
+            services.AddScoped<Manga.Application.Boundaries.Login.IUseCase, Manga.Application.UseCases.Login>();
+
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
