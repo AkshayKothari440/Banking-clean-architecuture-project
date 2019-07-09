@@ -7,12 +7,14 @@ namespace Manga.Application.Boundaries.Register
         public SSN SSN { get; }
         public Name Name { get; }
         public PositiveAmount InitialAmount { get; }
-        
-        public Input(SSN ssn, Name name, PositiveAmount initialAmount)
+
+        public Password Password { get; } //add
+        public Input(SSN ssn, Name name, Password password, PositiveAmount initialAmount)
         {
             SSN = ssn;
             Name = name;
             InitialAmount = initialAmount;
+            Password = password;
         }
     }
 }

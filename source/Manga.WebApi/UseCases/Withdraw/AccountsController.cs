@@ -4,9 +4,7 @@ namespace Manga.WebApi.UseCases.Withdraw
     using Manga.Application.Boundaries.Withdraw;
     using Manga.Domain.ValueObjects;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Authorization;
 
-    [Authorize]
     [Route("api/[controller]")]
     public class AccountsController : Controller
     {

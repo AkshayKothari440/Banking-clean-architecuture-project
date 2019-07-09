@@ -39,6 +39,7 @@ namespace Manga.WebApi.UseCases.Register
                 output.Customer.CustomerId,
                 output.Customer.SSN,
                 output.Customer.Name,
+                output.Token,
                 accounts
             );
 

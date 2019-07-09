@@ -7,7 +7,7 @@ namespace Manga.Domain
 
     public interface IEntitiesFactory
     {
-        ICustomer NewCustomer(SSN ssn, Name name);
+        ICustomer NewCustomer(Guid customerId,SSN ssn, Name name);
         IAccount NewAccount(Guid customerId);
     }
 }

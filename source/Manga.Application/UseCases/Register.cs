@@ -5,6 +5,8 @@ namespace Manga.Application.UseCases
     using Manga.Application.Repositories;
     using Manga.Domain.Accounts;
     using Manga.Domain;
+    using Manga.Application.Service;
+    using System;
 
     public sealed class Register : IUseCase
     {
@@ -12,17 +14,20 @@ namespace Manga.Application.UseCases
         private readonly IOutputHandler _outputHandler;
         private readonly ICustomerRepository _customerRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IRegisterUserService _registerUserService; //Add 
 
         public Register(
             IEntitiesFactory entityFactory,
             IOutputHandler outputHandler,
             ICustomerRepository customerRepository,
-            IAccountRepository accountRepository)
+            IAccountRepository accountRepository, IRegisterUserService registerUserService)
         {
             _entityFactory = entityFactory;
             _outputHandler = outputHandler;
             _customerRepository = customerRepository;
             _accountRepository = accountRepository;
+            _registerUserService = registerUserService; //add
+
         }
 
         public async Task Execute(Input input)
@@ -32,8 +37,16 @@ namespace Manga.Application.UseCases
                 _outputHandler.Error("Input is null.");
                 return;
             }
+            //var customerId = _registerUserService.Execute(input.Name.ToString(), input.Password.ToString()); //add
+            //if (customerId == null || customerId == Guid.Empty) //add
+            var registerOutput = _registerUserService.Execute(input.Name.ToString(), input.Password.ToString());
+            if (registerOutput == null)
+            { 
+                _outputHandler.Error("An error throw when registering user ID");//add
+                return; //add
+            }
 
-            var customer = _entityFactory.NewCustomer(input.SSN, input.Name);
+            var customer = _entityFactory.NewCustomer(registerOutput.CustomerId,input.SSN, input.Name);
             var account = _entityFactory.NewAccount(customer.Id);
 
             ICredit credit = account.Deposit(input.InitialAmount);
@@ -48,7 +61,7 @@ namespace Manga.Application.UseCases
             await _customerRepository.Add(customer);
             await _accountRepository.Add(account, credit);
 
-            Output output = new Output(customer, account);
+            Output output = new Output(customer, account, registerOutput.Token);
             _outputHandler.Handle(output);
         }
     }

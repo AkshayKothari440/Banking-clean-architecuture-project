@@ -11,13 +11,15 @@ namespace Manga.UnitTests.UseCasesTests
     using System.Threading.Tasks;
     using Application.Boundaries.Register;
     using System;
+    using Manga.Infrastructure.IdentityAuthentication;
+    using Microsoft.AspNetCore.Identity;
 
     public sealed class RegisterTests
     {
         [Fact]
         public void GivenNullInput_ThrowsException()
         {
-            var register = new Register(null, null, null, null);
+            var register = new Register(null, null, null, null,null);
             Assert.ThrowsAsync<Exception>(async() => await register.Execute(null));
         }
 
@@ -28,25 +30,29 @@ namespace Manga.UnitTests.UseCasesTests
         [InlineData(3300)]
         public async Task Register_WritesOutput_InputIsValid(double amount)
         {
-            var ssn = new SSN("8608178888");
-            var name = new Name("Ivan Paulovich");
+            var ssn = new SSN("9909999099");
+            var name = new Name("hello");
+            var password = new Password("hello@123");
 
             var entityFactory = new DefaultEntitiesFactory();
             var presenter = new Presenter();
             var context = new MangaContext();
             var customerRepository = new CustomerRepository(context);
             var accountRepository = new AccountRepository(context);
+            var registerUser = new RegisterUser(new UserManager<IdentityUser>());
 
             var sut = new Register(
                 entityFactory,
                 presenter,
                 customerRepository,
-                accountRepository
+                accountRepository,
+                registerUser
             );
 
             await sut.Execute(new Input(
                 ssn,
                 name,
+                password,
                 new PositiveAmount(amount)));
             
             var actual = presenter.Registers.First();

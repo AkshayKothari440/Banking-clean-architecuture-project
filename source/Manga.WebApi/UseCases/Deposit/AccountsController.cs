@@ -4,9 +4,7 @@ namespace Manga.WebApi.UseCases.Deposit
     using Microsoft.AspNetCore.Mvc;
     using Manga.Application.Boundaries.Deposit;
     using Manga.Domain.ValueObjects;
-    using Microsoft.AspNetCore.Authorization;
-
-    [Authorize]
+   
     [Route("api/[controller]")]
         
     public class AccountsController : Controller

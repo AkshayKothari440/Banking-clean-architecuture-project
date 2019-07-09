@@ -27,9 +27,9 @@ namespace Manga.Domain.Customers
 
         private Customer() { }
 
-        public Customer(SSN ssn, Name name)
+        public Customer(Guid registerId,SSN ssn, Name name)
         {
-            Id = Guid.NewGuid();
+            Id = registerId;
             SSN = ssn;
             Name = name;
         }

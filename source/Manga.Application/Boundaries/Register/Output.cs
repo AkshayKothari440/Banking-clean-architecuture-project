@@ -8,13 +8,13 @@ namespace Manga.Application.Boundaries.Register
     {
         public Customer Customer { get; }
         public Account Account { get; }
-
-        public Output(ICustomer customer, IAccount account)
+        public string Token { get; }
+        public Output(ICustomer customer, IAccount account,string token)
         {
             List<Transaction> transactionResults = new List<Transaction>();
             foreach (ICredit credit in account.GetCredits())
             {
-                Credit creditEntity = (Credit) credit;
+                Credit creditEntity = (Credit)credit;
 
                 Transaction transactionOutput = new Transaction(
                     creditEntity.Description,
@@ -29,7 +29,7 @@ namespace Manga.Application.Boundaries.Register
 
             foreach (IDebit debit in account.GetDebits())
             {
-                Debit debitEntity = (Debit) debit;
+                Debit debitEntity = (Debit)debit;
 
                 Transaction transactionOutput = new Transaction(
                     debitEntity.Description,
@@ -51,6 +51,7 @@ namespace Manga.Application.Boundaries.Register
             accountOutputs.Add(Account);
 
             Customer = new Customer(customer, accountOutputs);
+            Token = token;
         }
     }
 }

@@ -4,7 +4,9 @@ namespace Manga.WebApi.UseCases.Register
     using Manga.Application.Boundaries.Register;
     using Manga.Domain.ValueObjects;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authorization;
 
+   // [Authorize]
     [Route("api/[controller]")]
     public class CustomersController : Controller
     {
@@ -28,6 +30,7 @@ namespace Manga.WebApi.UseCases.Register
             await _registerUseCase.Execute(new Input(
                 new SSN(request.SSN),
                 new Name(request.Name),
+                new Password(request.Password),
                 new PositiveAmount(request.InitialAmount)));
 
             return _presenter.ViewModel;
