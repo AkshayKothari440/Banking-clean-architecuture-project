@@ -4,7 +4,9 @@ namespace Manga.WebApi.UseCases.GetAccountDetails
     using System;
     using Manga.Application.Boundaries.GetAccountDetails;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authorization;
 
+    [Authorize]
     [Route("api/[controller]")]
     public class AccountsController : Controller
     {

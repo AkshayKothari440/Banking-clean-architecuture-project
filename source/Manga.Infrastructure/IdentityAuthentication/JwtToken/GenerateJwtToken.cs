@@ -28,7 +28,7 @@ namespace Manga.Infrastructure.IdentityAuthentication.JwtToken
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.JwtKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(jwtConfig.JwtExpireday));
+            var expires = DateTime.Now.AddDays(Convert.ToDouble(jwtConfig.JwtExpireDays));
 
             var token = new JwtSecurityToken(
                jwtConfig.JwtIssuer,
