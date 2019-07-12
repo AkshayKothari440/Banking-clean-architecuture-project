@@ -4,6 +4,7 @@ using Manga.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,21 +23,34 @@ namespace Manga.Infrastructure.IdentityAuthentication
             this.generateToken = generateToken;
         }
 
-        public LoginOutput Execute(string username, string password)
+        public LoginOutput Execute(IdentityUser user, string password)
         {
-            return LoginAsync(username, password).Result;
+            return LoginAsync(user, password).Result;
         }
 
-        private async Task<LoginOutput> LoginAsync(string username, string password)
+        public async Task<IdentityUser> GetEmailUser(string email)
         {
-            var result = await signInManager.PasswordSignInAsync(username, password, true, lockoutOnFailure: true);
+            return await userManager.FindByEmailAsync(email);
+        }
+        public async Task<IdentityUser> GetNameUser(string name)
+        {
+            return await userManager.FindByNameAsync(name);
+        }
+        public async Task<IdentityUser> GetMobileUser(string mobile)
+        {
+            return userManager.Users.SingleOrDefault(m=>m.PhoneNumber==mobile);
+        }
+
+        private async Task<LoginOutput> LoginAsync(IdentityUser user, string password)
+        {
+            //var result = await signInManager.PasswordSignInAsync(username, password, true, lockoutOnFailure: true);
+            var result = await signInManager.PasswordSignInAsync(user,password,true,false);
 
             if (result.Succeeded)
             {
-                var user = userManager.FindByNameAsync(username).Result;
+                //var user = userManager.FindByNameAsync(username).Result;
 
-                var token = await generateToken.GetToken(username, user);
-
+                var token = await generateToken.GetToken(user.UserName, user);
 
                 return new LoginOutput { CustomerId = new Guid(user.Id), Name = user.UserName, Token = token };
             }

@@ -7,7 +7,7 @@ namespace Manga.Application.Boundaries.Login
 {
     public class Input
     {
-        public Name Name { get; }
+        public object Name { get; }
 
         public Password Password { get; }
 

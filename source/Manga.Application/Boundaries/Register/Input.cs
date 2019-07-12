@@ -6,13 +6,17 @@ namespace Manga.Application.Boundaries.Register
     {
         public SSN SSN { get; }
         public Name Name { get; }
+        public Email Email { get; }
+        public Mobile Mobile { get; }
         public PositiveAmount InitialAmount { get; }
 
         public Password Password { get; } //add
-        public Input(SSN ssn, Name name, Password password, PositiveAmount initialAmount)
+        public Input(SSN ssn, Name name, Email email,Mobile mobile, Password password, PositiveAmount initialAmount)
         {
             SSN = ssn;
             Name = name;
+            Email = email;
+            Mobile = mobile;
             InitialAmount = initialAmount;
             Password = password;
         }

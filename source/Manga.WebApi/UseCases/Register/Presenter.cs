@@ -10,7 +10,7 @@ namespace Manga.WebApi.UseCases.Register
 
         public void Error(string message)
         {
-            ViewModel = new NoContentResult();
+            ViewModel = new ObjectResult(message);
         }
 
         public void Handle(Output output)

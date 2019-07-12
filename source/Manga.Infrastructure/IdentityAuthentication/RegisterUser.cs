@@ -4,6 +4,7 @@ using Manga.Application.Service;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 namespace Manga.Infrastructure.IdentityAuthentication
@@ -20,14 +21,25 @@ namespace Manga.Infrastructure.IdentityAuthentication
             this.signInManager = signInManager;
             this.generateToken = generateToken;
         }
-        public RegisterOutput Execute(string username,string password)
+        public RegisterOutput Execute(string username,string password,string email,string mobile)
         {
-            return RegistrationAsync(username, password).Result;
+            return RegistrationAsync(username, password,email,mobile).Result;
         }
-
-        private async Task<RegisterOutput> RegistrationAsync(string username, string password)
+        public async Task<IdentityUser> GetEmailUser(string email)
         {
-            var user = new IdentityUser { UserName = username };
+            return await userManager.FindByEmailAsync(email);
+        }
+        public async Task<IdentityUser> GetNameUser(string name)
+        {
+            return await userManager.FindByNameAsync(name);
+        }
+        public async Task<IdentityUser> GetMobileUser(string mobile)
+        {
+            return userManager.Users.SingleOrDefault(m => m.PhoneNumber == mobile);
+        }
+        private async Task<RegisterOutput> RegistrationAsync(string username, string password,string email,string mobile)
+        {
+            var user = new IdentityUser { UserName = username,Email=email,PhoneNumber=mobile};
             var Result = await userManager.CreateAsync(user, password);
             if(Result.Succeeded)
             {

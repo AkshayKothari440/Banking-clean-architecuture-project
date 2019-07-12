@@ -13,7 +13,7 @@ namespace Manga.WebApi.UseCases.Login
 
         public void Error(string message)
         {
-            ViewModel = new NoContentResult();
+            ViewModel = new ObjectResult(message);
         }
 
         public void Handle(Output output)

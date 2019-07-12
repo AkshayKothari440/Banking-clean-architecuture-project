@@ -7,6 +7,7 @@ namespace Manga.Application.UseCases
     using Manga.Domain;
     using Manga.Application.Service;
     using System;
+    using Microsoft.AspNetCore.Identity;
 
     public sealed class Register : IUseCase
     {
@@ -37,32 +38,51 @@ namespace Manga.Application.UseCases
                 _outputHandler.Error("Input is null.");
                 return;
             }
+            var isEmailExist = await _registerUserService.GetEmailUser(input.Email.ToString());
+            var isPhoneExist =  _registerUserService.GetMobileUser(input.Mobile.ToString()).Result;
+            var isUserNameExist = await _registerUserService.GetNameUser(input.Name.ToString());
+            if (isEmailExist != null)
+            {
+                _outputHandler.Error("Email Already Exist");
+            }
+            else if (isPhoneExist != null)
+            {
+                _outputHandler.Error("MobileNumber Already Exist");
+            }
+            else if (isUserNameExist != null)
+            {
+                _outputHandler.Error("UserName Already Exist");
+            }
             //var customerId = _registerUserService.Execute(input.Name.ToString(), input.Password.ToString()); //add
             //if (customerId == null || customerId == Guid.Empty) //add
-            var registerOutput = _registerUserService.Execute(input.Name.ToString(), input.Password.ToString());
-            if (registerOutput == null)
-            { 
-                _outputHandler.Error("An error throw when registering user ID");//add
-                return; //add
-            }
-
-            var customer = _entityFactory.NewCustomer(registerOutput.CustomerId,input.SSN, input.Name);
-            var account = _entityFactory.NewAccount(customer.Id);
-
-            ICredit credit = account.Deposit(input.InitialAmount);
-            if (credit == null)
+            else if(isEmailExist==null && isPhoneExist==null && isUserNameExist==null)
             {
-                _outputHandler.Error("An error happened when depositing the amount.");
-                return;
+                var registerOutput = _registerUserService.Execute(input.Name.ToString(), input.Password.ToString()
+                , input.Email.ToString(), input.Mobile.ToString());
+                if (registerOutput == null)
+                {
+                    _outputHandler.Error("An error throw when registering user ID");//add
+                    return; //add
+                }
+
+                var customer = _entityFactory.NewCustomer(registerOutput.CustomerId, input.SSN, input.Name);
+                var account = _entityFactory.NewAccount(customer.Id);
+
+                ICredit credit = account.Deposit(input.InitialAmount);
+                if (credit == null)
+                {
+                    _outputHandler.Error("An error happened when depositing the amount.");
+                    return;
+                }
+
+                customer.Register(account.Id);
+
+                await _customerRepository.Add(customer);
+                await _accountRepository.Add(account, credit);
+
+                Output output = new Output(customer, account, registerOutput.Token);
+                _outputHandler.Handle(output);
             }
-
-            customer.Register(account.Id);
-
-            await _customerRepository.Add(customer);
-            await _accountRepository.Add(account, credit);
-
-            Output output = new Output(customer, account, registerOutput.Token);
-            _outputHandler.Handle(output);
         }
     }
 }
